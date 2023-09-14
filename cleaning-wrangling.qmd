@@ -1,0 +1,93 @@
+---
+title: "Cleaning and wrangling"
+format: html
+editor: visual
+---
+
+# Setup
+'''{r load libraries}
+library(dplyr)
+library(tidyr)
+library(readr)
+
+# Data Source
+
+## Read in Data
+```{r}
+catch_original <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method = "libcurl"))
+```
+
+## Exploring data
+```{r}
+## Prints the column names of my data frame
+colnames(catch_original)
+
+## First 6 lines of the data frame
+head(catch_original)
+
+## Summary of each column of data
+summary(catch_original)
+
+## Prints unique values in a column (in this case, the region)
+unique(catch_original$Region)
+
+## Opens data frame in its own tab to see each row and column of the data
+View(catch_original)
+```
+
+```{r}
+catch_data <- catch_original %>%
+  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum)
+```
+```{r}
+head(catch_data)
+
+catch_data <- catch_original %>%
+    select(-All,-notesRegCode)
+```
+    
+# Check Column types
+
+```{r}
+catch_clean <- catch_data %>%
+  mutate(Chinook = as.numeric(Chinook))
+```
+##Summary stats using `group_by()` and `summarize()`
+```{r}
+catch_data <- catch_original %>%
+    select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum)
+
+head(catch_data)
+```
+```{r}
+  catch_data <- catch_original %>%
+    select(-All,-notesRegCode)
+head(catch_data)
+```
+```{r}
+catch_clean <- catch_data %>%
+    mutate(Chinook = as.numeric(Chinook))
+```
+```{r}
+## create `cities_df`
+cities_df <- data.frame(city = c("Juneau AK",
+                                 "Sitka AK",
+                                 "Anchorage AK"))
+```
+
+```{r}
+dates_df <- data.frame(
+    year = c("1930",
+             "1930",
+             "1930"),
+    month = c("12",
+              "12",
+              "12"),
+    day = c("14",
+            "15",
+            "16")
+)
+
+dates_df %>%
+    unite(date, year, month, day, sep = "-")
+```
